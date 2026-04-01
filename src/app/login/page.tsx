@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -51,14 +52,16 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-surface">
       {/* Brand */}
       <div className="mb-8 text-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo.png"
-          alt="Corpers Connect"
-          className="mx-auto mb-2 object-contain"
-          style={{ width: 140, height: 140 }}
-        />
-        <span className="inline-block mt-1 text-xs font-semibold tracking-widest text-primary uppercase">
+        <div className="relative mx-auto mb-3" style={{ width: 220, height: 56 }}>
+          <Image
+            src="/corpersconnectlogo.jpg"
+            alt="Corpers Connect"
+            fill
+            className="object-contain object-left"
+            priority
+          />
+        </div>
+        <span className="inline-block text-xs font-semibold tracking-widest text-primary uppercase">
           Admin Portal
         </span>
       </div>
