@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import Logo from '@/components/shared/Logo';
 import { Menu, ChevronDown, LogOut, User } from 'lucide-react';
 import { useUiStore } from '@/store/ui.store';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -52,8 +52,8 @@ export function Topbar() {
       {/* Left: mobile logo | desktop hamburger + page title */}
       <div className="flex items-center gap-3">
         {/* Mobile: show logo instead of sidebar toggle */}
-        <div className="flex items-center gap-2 lg:hidden">
-          <Image src="/corpersconnectlogo.jpg" alt="Corpers Connect" width={160} height={40} className="object-contain" priority unoptimized />
+        <div className="flex items-center lg:hidden">
+          <Logo size="md" />
         </div>
 
         {/* Desktop: hamburger toggle + page title */}

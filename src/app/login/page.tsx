@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Logo from '@/components/shared/Logo';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
@@ -51,17 +51,9 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-surface">
       {/* Brand */}
-      <div className="mb-8 text-center">
-        <Image
-          src="/corpersconnectlogo.jpg"
-          alt="Corpers Connect"
-          width={240}
-          height={62}
-          className="mx-auto mb-3"
-          priority
-          unoptimized
-        />
-        <span className="inline-block text-xs font-semibold tracking-widest text-primary uppercase">
+      <div className="mb-8 flex flex-col items-center">
+        <Logo size="xl" className="mb-3" />
+        <span className="text-xs font-semibold tracking-widest text-primary uppercase">
           Admin Portal
         </span>
       </div>

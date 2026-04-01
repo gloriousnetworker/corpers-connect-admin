@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import Logo from '@/components/shared/Logo';
 import {
   LayoutDashboard,
   Users,
@@ -60,11 +60,11 @@ export function Sidebar() {
       )}
     >
       {/* Logo / brand */}
-      <div className={cn('flex items-center justify-center px-3 py-3 border-b border-border')}>
+      <div className="flex items-center justify-center px-3 py-3 border-b border-border">
         {collapsed ? (
-          <Image src="/icons/icon-192x192.png" alt="Corpers Connect" width={36} height={36} className="object-contain" priority unoptimized />
+          <Logo variant="mark" size="sm" />
         ) : (
-          <Image src="/corpersconnectlogo.jpg" alt="Corpers Connect" width={180} height={44} className="object-contain" priority unoptimized />
+          <Logo size="md" />
         )}
       </div>
 
