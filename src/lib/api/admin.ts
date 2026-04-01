@@ -30,5 +30,6 @@ export async function getAuditLogs(params?: {
 
 export async function adminLogin(email: string, password: string) {
   const res = await apiClient.post('/admin/auth/login', { email, password });
-  return res.data.data as { token: string; admin: import('@/types/models').AdminUser };
+  const data = res.data.data as { accessToken: string; admin: import('@/types/models').AdminUser };
+  return { token: data.accessToken, admin: data.admin };
 }
