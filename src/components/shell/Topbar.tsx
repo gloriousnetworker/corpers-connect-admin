@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, ChevronDown, LogOut, User } from 'lucide-react';
 import { useUiStore } from '@/store/ui.store';
@@ -53,13 +52,11 @@ export function Topbar() {
       <div className="flex items-center gap-3">
         {/* Mobile: show logo instead of sidebar toggle */}
         <div className="flex items-center gap-2 lg:hidden">
-          <Image
-            src="/corpers-connect-logo-without-background.png"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.png"
             alt="Corpers Connect"
-            width={40}
-            height={40}
-            className="object-contain"
-            priority
+            style={{ width: 48, height: 48, objectFit: 'contain' }}
           />
           <span className="font-semibold text-sm text-foreground">Admin</span>
         </div>

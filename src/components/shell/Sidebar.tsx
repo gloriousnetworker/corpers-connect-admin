@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -61,13 +60,11 @@ export function Sidebar() {
     >
       {/* Logo / brand */}
       <div className={cn('flex items-center gap-3 px-4 py-4 border-b border-border', collapsed && 'justify-center px-2')}>
-        <Image
-          src="/corpers-connect-logo-without-background.png"
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo.png"
           alt="Corpers Connect"
-          width={collapsed ? 44 : 48}
-          height={collapsed ? 44 : 48}
-          className="flex-shrink-0 object-contain"
-          priority
+          style={{ width: collapsed ? 40 : 56, height: collapsed ? 40 : 56, objectFit: 'contain', flexShrink: 0 }}
         />
         {!collapsed && (
           <div className="min-w-0">
