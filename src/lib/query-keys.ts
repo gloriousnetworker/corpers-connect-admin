@@ -1,0 +1,15 @@
+export const queryKeys = {
+  dashboard: () => ['dashboard'] as const,
+  users: (params?: Record<string, unknown>) => ['users', params] as const,
+  user: (userId: string) => ['users', userId] as const,
+  reports: (params?: Record<string, unknown>) => ['reports', params] as const,
+  report: (reportId: string) => ['reports', reportId] as const,
+  sellerApplications: (params?: Record<string, unknown>) => ['seller-applications', params] as const,
+  listings: (params?: Record<string, unknown>) => ['listings', params] as const,
+  opportunities: (params?: Record<string, unknown>) => ['opportunities', params] as const,
+  subscriptions: (params?: Record<string, unknown>) => ['subscriptions', params] as const,
+  broadcasts: (params?: Record<string, unknown>) => ['broadcasts', params] as const,
+  settings: () => ['settings'] as const,
+  auditLogs: (params?: Record<string, unknown>) => ['audit-logs', params] as const,
+  admins: () => ['admins'] as const,
+};

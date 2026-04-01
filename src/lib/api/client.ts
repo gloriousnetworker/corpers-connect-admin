@@ -1,0 +1,43 @@
+import axios, { type AxiosError } from 'axios';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://corpers-connect-server-production.up.railway.app/api/v1';
+
+export const apiClient = axios.create({
+  baseURL: API_URL,
+  timeout: 15_000,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+// Attach token from localStorage on every request
+apiClient.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('cc_admin_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
+// On 401: clear token and redirect to login
+apiClient.interceptors.response.use(
+  (res) => res,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cc_admin_token');
+        localStorage.removeItem('cc_admin_user');
+        if (!window.location.pathname.includes('/login')) {
+          window.location.replace('/login');
+        }
+      }
+    }
+    const message =
+      (error.response?.data as { message?: string })?.message ??
+      error.message ??
+      'An unexpected error occurred';
+    const err = new Error(message) as Error & { statusCode?: number };
+    err.statusCode = error.response?.status;
+    return Promise.reject(err);
+  },
+);
