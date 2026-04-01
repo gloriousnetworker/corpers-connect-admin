@@ -40,16 +40,22 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (typeof window === 'undefined') return;
     const token = localStorage.getItem('cc_admin_token');
     const adminRaw = localStorage.getItem('cc_admin_user');
-    if (token && adminRaw) {
+    const validToken = token && token !== 'undefined' && token !== 'null';
+    if (validToken && adminRaw) {
       try {
         const admin = JSON.parse(adminRaw) as AdminUser;
         set({ token, admin, isAuthenticated: true, hasHydrated: true });
       } catch {
         localStorage.removeItem('cc_admin_token');
         localStorage.removeItem('cc_admin_user');
+        document.cookie = 'cc_admin_session=; path=/; max-age=0';
         set({ hasHydrated: true });
       }
     } else {
+      // Clear any stale/corrupt values
+      localStorage.removeItem('cc_admin_token');
+      localStorage.removeItem('cc_admin_user');
+      document.cookie = 'cc_admin_session=; path=/; max-age=0';
       set({ hasHydrated: true });
     }
   },

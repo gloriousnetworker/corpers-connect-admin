@@ -12,7 +12,8 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('cc_admin_token');
-    if (token) {
+    // Guard against stale "undefined" / "null" strings from broken prior logins
+    if (token && token !== 'undefined' && token !== 'null') {
       config.headers.Authorization = `Bearer ${token}`;
     }
   }
