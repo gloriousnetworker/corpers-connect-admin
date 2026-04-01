@@ -28,8 +28,8 @@ export function BarChart({
   height = 220,
 }: BarChartProps) {
   return (
-    <div data-testid="bar-chart" style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div data-testid="bar-chart" style={{ width: '100%', height }}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <ReBarChart data={data} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
           <XAxis

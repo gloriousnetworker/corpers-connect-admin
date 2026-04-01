@@ -29,8 +29,8 @@ export function LineChart({
   height = 220,
 }: LineChartProps) {
   return (
-    <div data-testid="line-chart" style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div data-testid="line-chart" style={{ width: '100%', height }}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <ReLineChart data={data} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
           <XAxis
