@@ -52,15 +52,15 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-surface">
       {/* Brand */}
       <div className="mb-8 text-center">
-        <div className="relative mx-auto mb-3" style={{ width: 220, height: 56 }}>
-          <Image
-            src="/corpersconnectlogo.jpg"
-            alt="Corpers Connect"
-            fill
-            className="object-contain object-left"
-            priority
-          />
-        </div>
+        <Image
+          src="/corpersconnectlogo.jpg"
+          alt="Corpers Connect"
+          width={240}
+          height={62}
+          className="mx-auto mb-3"
+          priority
+          unoptimized
+        />
         <span className="inline-block text-xs font-semibold tracking-widest text-primary uppercase">
           Admin Portal
         </span>

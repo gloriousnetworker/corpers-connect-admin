@@ -62,13 +62,9 @@ export function Sidebar() {
       {/* Logo / brand */}
       <div className={cn('flex items-center justify-center px-3 py-3 border-b border-border')}>
         {collapsed ? (
-          <div className="relative" style={{ width: 36, height: 36 }}>
-            <Image src="/icons/icon-192x192.png" alt="Corpers Connect" fill className="object-contain" priority />
-          </div>
+          <Image src="/icons/icon-192x192.png" alt="Corpers Connect" width={36} height={36} className="object-contain" priority unoptimized />
         ) : (
-          <div className="relative" style={{ width: 180, height: 44 }}>
-            <Image src="/corpersconnectlogo.jpg" alt="Corpers Connect" fill className="object-contain object-left" priority />
-          </div>
+          <Image src="/corpersconnectlogo.jpg" alt="Corpers Connect" width={180} height={44} className="object-contain" priority unoptimized />
         )}
       </div>
 

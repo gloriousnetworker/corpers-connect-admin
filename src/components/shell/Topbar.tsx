@@ -53,9 +53,7 @@ export function Topbar() {
       <div className="flex items-center gap-3">
         {/* Mobile: show logo instead of sidebar toggle */}
         <div className="flex items-center gap-2 lg:hidden">
-          <div className="relative" style={{ width: 160, height: 40 }}>
-            <Image src="/corpersconnectlogo.jpg" alt="Corpers Connect" fill className="object-contain object-left" priority />
-          </div>
+          <Image src="/corpersconnectlogo.jpg" alt="Corpers Connect" width={160} height={40} className="object-contain" priority unoptimized />
         </div>
 
         {/* Desktop: hamburger toggle + page title */}
