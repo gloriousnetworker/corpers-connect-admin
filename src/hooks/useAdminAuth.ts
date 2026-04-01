@@ -10,17 +10,21 @@ export function useAdminAuth() {
   const token = useAuthStore((s) => s.token);
   const admin = useAuthStore((s) => s.admin);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const hasHydrated = useAuthStore((s) => s.hasHydrated);
   const clearAuth = useAuthStore((s) => s.clearAuth);
 
-  const isLoading = !token && !isAuthenticated;
-
+  // Only redirect after hydration completes — store starts empty on every
+  // fresh render and hydrate() fills it via useEffect in AdminShellLayout.
+  // Without this guard, the redirect fires before the token is restored,
+  // hitting /login which the middleware bounces straight back to /dashboard.
   useEffect(() => {
-    if (!token && !isAuthenticated) {
+    if (hasHydrated && !token && !isAuthenticated) {
       router.replace('/login');
     }
-  }, [token, isAuthenticated, router]);
+  }, [hasHydrated, token, isAuthenticated, router]);
 
   const isSuperAdmin = admin?.role === AdminRole.SUPERADMIN;
+  const isLoading = !hasHydrated;
 
   const logout = () => {
     clearAuth();
