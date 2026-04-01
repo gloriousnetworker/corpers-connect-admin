@@ -21,6 +21,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (typeof window !== 'undefined') {
       localStorage.setItem('cc_admin_token', token);
       localStorage.setItem('cc_admin_user', JSON.stringify(admin));
+      // Session cookie lets middleware protect routes server-side
+      document.cookie = 'cc_admin_session=1; path=/; max-age=2592000; SameSite=Lax';
     }
     set({ token, admin, isAuthenticated: true });
   },
@@ -29,6 +31,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (typeof window !== 'undefined') {
       localStorage.removeItem('cc_admin_token');
       localStorage.removeItem('cc_admin_user');
+      document.cookie = 'cc_admin_session=; path=/; max-age=0';
     }
     set({ token: null, admin: null, isAuthenticated: false });
   },
