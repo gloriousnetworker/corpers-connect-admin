@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, ChevronDown, LogOut, User } from 'lucide-react';
 import { useUiStore } from '@/store/ui.store';
@@ -48,19 +49,33 @@ export function Topbar() {
       data-testid="topbar"
       className="flex h-14 items-center justify-between border-b border-border bg-white px-4 gap-4"
     >
-      {/* Left: hamburger + breadcrumb */}
+      {/* Left: mobile logo | desktop hamburger + page title */}
       <div className="flex items-center gap-3">
+        {/* Mobile: show logo instead of sidebar toggle */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <Image
+            src="/corpers-connect-logo-without-background.png"
+            alt="Corpers Connect"
+            width={28}
+            height={28}
+            className="object-contain"
+            priority
+          />
+          <span className="font-semibold text-sm text-foreground">Admin</span>
+        </div>
+
+        {/* Desktop: hamburger toggle + page title */}
         <button
           data-testid="topbar-menu-toggle"
           onClick={toggleSidebar}
           aria-label="Toggle sidebar"
-          className="rounded-md p-1.5 text-foreground-secondary hover:bg-surface-alt hover:text-foreground transition-colors"
+          className="hidden lg:flex rounded-md p-1.5 text-foreground-secondary hover:bg-surface-alt hover:text-foreground transition-colors"
         >
           <Menu size={20} />
         </button>
         <h1
           data-testid="topbar-title"
-          className="text-sm font-semibold text-foreground"
+          className="hidden lg:block text-sm font-semibold text-foreground"
         >
           {pageTitle}
         </h1>
