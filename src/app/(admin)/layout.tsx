@@ -9,12 +9,17 @@ export default function AdminShellLayout({ children }: { children: React.ReactNo
   const router = useRouter();
   const token = useAuthStore((s) => s.token);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const hasHydrated = useAuthStore((s) => s.hasHydrated);
 
   useEffect(() => {
-    if (!token && !isAuthenticated) {
+    if (hasHydrated && !token && !isAuthenticated) {
       router.replace('/login');
     }
-  }, [token, isAuthenticated, router]);
+  }, [hasHydrated, token, isAuthenticated, router]);
+
+  if (!hasHydrated) {
+    return null;
+  }
 
   if (!token && !isAuthenticated) {
     return null;
