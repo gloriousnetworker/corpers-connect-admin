@@ -99,6 +99,19 @@ export async function getAuditLogs(params?: {
 
 export async function adminLogin(email: string, password: string) {
   const res = await apiClient.post('/admin/auth/login', { email, password });
-  const data = res.data.data as { accessToken: string; admin: import('@/types/models').AdminUser };
-  return { token: data.accessToken, admin: data.admin };
+  const data = res.data.data as {
+    accessToken: string;
+    admin: { id: string; email: string; firstName: string; lastName: string; role: string };
+  };
+  const admin: import('@/types/models').AdminUser = {
+    id: data.admin.id,
+    email: data.admin.email,
+    firstName: data.admin.firstName,
+    lastName: data.admin.lastName,
+    role: data.admin.role as import('@/types/models').AdminUser['role'],
+    isActive: true,
+    lastLoginAt: null,
+    createdAt: new Date().toISOString(),
+  };
+  return { token: data.accessToken, admin };
 }

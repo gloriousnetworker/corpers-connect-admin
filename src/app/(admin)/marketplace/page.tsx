@@ -45,7 +45,7 @@ export default function MarketplacePage() {
       accessorKey: 'category',
       header: 'Category',
       cell: ({ getValue }) => (
-        <span className="text-sm text-foreground-secondary capitalize">{(getValue() as string).toLowerCase()}</span>
+        <span className="text-sm text-foreground-secondary capitalize">{(getValue() as string | undefined)?.toLowerCase() ?? ''}</span>
       ),
     },
     {
@@ -102,7 +102,7 @@ export default function MarketplacePage() {
       accessorKey: 'category',
       header: 'Category',
       cell: ({ getValue }) => (
-        <span className="text-sm text-foreground-secondary capitalize">{(getValue() as string).toLowerCase()}</span>
+        <span className="text-sm text-foreground-secondary capitalize">{(getValue() as string | undefined)?.toLowerCase() ?? ''}</span>
       ),
     },
     {

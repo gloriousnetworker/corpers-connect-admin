@@ -18,6 +18,10 @@ export async function getBroadcasts(params?: {
   cursor?: string;
   limit?: number;
 }): Promise<{ data: Broadcast[]; nextCursor?: string | null; hasMore: boolean }> {
-  const res = await apiClient.get('/admin/broadcasts', { params });
-  return res.data.data;
+  const res = await apiClient.get('/admin/broadcasts', { params }).catch(() =>
+    ({ data: { data: { data: [], hasMore: false, nextCursor: null } } })
+  );
+  const raw = res.data.data as { data?: Broadcast[]; items?: Broadcast[]; hasMore?: boolean; nextCursor?: string | null };
+  const items = raw?.data ?? raw?.items ?? [];
+  return { data: items, hasMore: raw?.hasMore ?? false, nextCursor: raw?.nextCursor ?? null };
 }

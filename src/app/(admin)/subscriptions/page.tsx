@@ -46,7 +46,7 @@ export default function SubscriptionsPage() {
       accessorKey: 'plan',
       header: 'Plan',
       cell: ({ getValue }: { getValue: () => unknown }) => (
-        <span className="text-sm capitalize">{(getValue() as string).toLowerCase()}</span>
+        <span className="text-sm capitalize">{(getValue() as string | undefined)?.toLowerCase() ?? ''}</span>
       ),
     },
     {

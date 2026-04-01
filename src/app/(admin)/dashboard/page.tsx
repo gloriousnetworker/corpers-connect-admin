@@ -203,7 +203,7 @@ export default function DashboardPage() {
                 <tbody>
                   {data.recentReports.map((r) => (
                     <tr key={r.id} className="border-b border-border last:border-0">
-                      <td className="py-2 capitalize text-foreground-secondary">{r.entityType.toLowerCase()}</td>
+                      <td className="py-2 capitalize text-foreground-secondary">{r.entityType?.toLowerCase() ?? ''}</td>
                       <td className="py-2 text-foreground truncate max-w-[100px]">{r.reason}</td>
                       <td className="py-2">
                         <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${getReportStatusColor(r.status)}`}>

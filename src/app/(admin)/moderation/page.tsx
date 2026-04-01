@@ -30,7 +30,7 @@ const COLUMNS: ColumnDef<Report>[] = [
     header: 'Type',
     cell: ({ getValue }) => (
       <span className="capitalize text-sm text-foreground-secondary">
-        {(getValue() as string).toLowerCase()}
+        {(getValue() as string | undefined)?.toLowerCase() ?? ''}
       </span>
     ),
   },
