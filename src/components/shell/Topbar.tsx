@@ -56,8 +56,8 @@ export function Topbar() {
           <Image
             src="/corpers-connect-logo-without-background.png"
             alt="Corpers Connect"
-            width={28}
-            height={28}
+            width={40}
+            height={40}
             className="object-contain"
             priority
           />

@@ -64,8 +64,8 @@ export function Sidebar() {
         <Image
           src="/corpers-connect-logo-without-background.png"
           alt="Corpers Connect"
-          width={collapsed ? 36 : 32}
-          height={collapsed ? 36 : 32}
+          width={collapsed ? 44 : 48}
+          height={collapsed ? 44 : 48}
           className="flex-shrink-0 object-contain"
           priority
         />
