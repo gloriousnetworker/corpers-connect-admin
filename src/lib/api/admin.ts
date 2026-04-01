@@ -3,12 +3,50 @@ import type { DashboardStats, SystemSetting, AuditLog } from '@/types/models';
 
 export async function getDashboard(): Promise<DashboardStats> {
   const res = await apiClient.get('/admin/dashboard');
-  return res.data.data;
+  const raw = res.data.data as {
+    totalUsers: number;
+    activeUsers: number;
+    premiumUsers: number;
+    totalPosts: number;
+    pendingReports: number;
+    pendingSellerApps: number;
+    activeSubscriptions: number;
+  };
+
+  // Map flat backend shape → nested DashboardStats shape the UI expects
+  return {
+    users: {
+      total: raw.totalUsers ?? 0,
+      activeToday: raw.activeUsers ?? 0,
+      newThisWeek: 0,
+      newThisWeekChange: 0,
+    },
+    subscriptions: {
+      premium: raw.premiumUsers ?? 0,
+      revenue30d: 0,
+      revenueChange: 0,
+    },
+    moderation: {
+      pendingReports: raw.pendingReports ?? 0,
+      pendingSellerApps: raw.pendingSellerApps ?? 0,
+    },
+    charts: {
+      userGrowth: [],
+      revenue: [],
+      contentActivity: [],
+      subscriptionMix: {
+        free: (raw.totalUsers ?? 0) - (raw.premiumUsers ?? 0),
+        premium: raw.premiumUsers ?? 0,
+      },
+    },
+    recentReports: [],
+    recentRegistrations: [],
+  };
 }
 
 export async function getSettings(): Promise<SystemSetting[]> {
   const res = await apiClient.get('/admin/settings');
-  return res.data.data;
+  return res.data.data ?? [];
 }
 
 export async function updateSetting(key: string, value: string): Promise<SystemSetting> {
@@ -25,7 +63,38 @@ export async function getAuditLogs(params?: {
   limit?: number;
 }): Promise<{ data: AuditLog[]; nextCursor?: string | null; hasMore: boolean }> {
   const res = await apiClient.get('/admin/audit-logs', { params });
-  return res.data.data;
+  const raw = res.data.data as {
+    items: Array<{
+      id: string;
+      adminId: string;
+      admin: { id: string; firstName: string; lastName: string; email: string };
+      action: string;
+      entityType?: string | null;
+      entityId?: string | null;
+      details?: Record<string, unknown> | null;
+      ipAddress?: string | null;
+      createdAt: string;
+    }>;
+    hasMore: boolean;
+  };
+
+  const items = raw?.items ?? [];
+  return {
+    data: items.map((item) => ({
+      id: item.id,
+      adminId: item.adminId,
+      admin: item.admin,
+      action: item.action,
+      targetType: item.entityType ?? null,
+      targetId: item.entityId ?? null,
+      targetLabel: item.entityId ?? null,
+      details: item.details ?? null,
+      ipAddress: item.ipAddress ?? null,
+      createdAt: item.createdAt,
+    })),
+    hasMore: raw?.hasMore ?? false,
+    nextCursor: raw?.hasMore && items.length > 0 ? items[items.length - 1].id : null,
+  };
 }
 
 export async function adminLogin(email: string, password: string) {
