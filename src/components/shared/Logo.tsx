@@ -27,6 +27,7 @@ export default function Logo({ size = 'md', variant = 'full', className }: LogoP
           src="/icons/icon-192x192.png"
           alt="Corpers Connect"
           fill
+          sizes={`${dims.markSize}px`}
           className="object-contain"
           priority
         />
@@ -43,6 +44,7 @@ export default function Logo({ size = 'md', variant = 'full', className }: LogoP
         src="/corpersconnectlogo.jpg"
         alt="Corpers Connect"
         fill
+        sizes={`${dims.width}px`}
         className="object-contain object-left"
         priority
       />

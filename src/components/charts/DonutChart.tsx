@@ -16,7 +16,7 @@ interface DonutChartProps {
 export function DonutChart({ data, height = 220 }: DonutChartProps) {
   return (
     <div data-testid="donut-chart" style={{ width: '100%', height }}>
-      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={1}>
         <PieChart>
           <Pie
             data={data}

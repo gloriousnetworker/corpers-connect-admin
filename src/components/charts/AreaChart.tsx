@@ -33,7 +33,7 @@ export function AreaChart({
 }: AreaChartProps) {
   return (
     <div data-testid="area-chart" style={{ width: '100%', height }}>
-      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={1}>
         <ReAreaChart data={data} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
           <defs>
             {series.map((s) => (

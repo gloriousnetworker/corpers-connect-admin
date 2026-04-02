@@ -30,7 +30,7 @@ export function LineChart({
 }: LineChartProps) {
   return (
     <div data-testid="line-chart" style={{ width: '100%', height }}>
-      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={1}>
         <ReLineChart data={data} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
           <XAxis
