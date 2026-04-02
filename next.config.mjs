@@ -1,5 +1,7 @@
 import withPWAInit from '@ducanh2912/next-pwa';
 
+const RAILWAY_URL = 'https://corpers-connect-server-production.up.railway.app';
+
 const withPWA = withPWAInit({
   dest: 'public',
   cacheOnFrontEndNav: true,
@@ -24,6 +26,18 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 31,
   },
+  // Dev-only proxy: routes /api/proxy/* → Railway backend to avoid CORS in local dev.
+  // In production NEXT_PUBLIC_API_URL points directly to Railway so this path is never used.
+  async rewrites() {
+    if (process.env.NODE_ENV !== 'development') return [];
+    return [
+      {
+        source: '/api/proxy/:path*',
+        destination: `${RAILWAY_URL}/api/v1/:path*`,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
