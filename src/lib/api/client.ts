@@ -8,17 +8,18 @@ if (!API_URL) throw new Error('NEXT_PUBLIC_API_URL is not set — add it to your
 export const apiClient = axios.create({
   baseURL: API_URL,
   timeout: 15_000,
+  withCredentials: true, // send httpOnly cc_admin_session cookie on every request
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach token from localStorage on every request
+// Attach token from in-memory Zustand store on every request.
+// The token is set by setAuth() after login or hydration via /admin/auth/me.
+// Nothing is read from localStorage — the source of truth is now the httpOnly
+// cookie (for the middleware) and in-memory Zustand state (for API headers).
 apiClient.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('cc_admin_token');
-    // Guard against stale "undefined" / "null" strings from broken prior logins
-    if (token && token !== 'undefined' && token !== 'null') {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  const token = useAuthStore.getState().token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

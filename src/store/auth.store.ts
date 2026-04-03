@@ -8,7 +8,7 @@ interface AuthState {
   hasHydrated: boolean;
   setAuth: (token: string, admin: AdminUser) => void;
   clearAuth: () => void;
-  hydrate: () => void;
+  hydrate: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -18,46 +18,53 @@ export const useAuthStore = create<AuthState>((set) => ({
   hasHydrated: false,
 
   setAuth: (token, admin) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cc_admin_token', token);
-      localStorage.setItem('cc_admin_user', JSON.stringify(admin));
-      // Store the JWT in the session cookie so middleware can decode it and
-      // verify expiry + role — not just a presence flag.
-      // Not httpOnly because client JS must be able to clear it on logout.
-      document.cookie = `cc_admin_session=${token}; path=/; max-age=2592000; SameSite=Lax`;
-    }
+    // Store token in memory only — never in localStorage.
+    // The backend sets the httpOnly cc_admin_session cookie so there is no
+    // client-side token to persist.
     set({ token, admin, isAuthenticated: true });
   },
 
   clearAuth: () => {
+    // Remove legacy localStorage entries from before the httpOnly migration.
     if (typeof window !== 'undefined') {
       localStorage.removeItem('cc_admin_token');
       localStorage.removeItem('cc_admin_user');
-      document.cookie = 'cc_admin_session=; path=/; max-age=0';
     }
     set({ token: null, admin: null, isAuthenticated: false });
   },
 
-  hydrate: () => {
-    if (typeof window === 'undefined') return;
-    const token = localStorage.getItem('cc_admin_token');
-    const adminRaw = localStorage.getItem('cc_admin_user');
-    const validToken = token && token !== 'undefined' && token !== 'null';
-    if (validToken && adminRaw) {
-      try {
-        const admin = JSON.parse(adminRaw) as AdminUser;
-        set({ token, admin, isAuthenticated: true, hasHydrated: true });
-      } catch {
+  hydrate: async () => {
+    // Restore session by calling GET /admin/auth/me — the httpOnly
+    // cc_admin_session cookie is sent automatically (withCredentials).
+    // This replaces the old localStorage-based approach.
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      if (!API_URL) throw new Error('NEXT_PUBLIC_API_URL not set');
+
+      const res = await fetch(`${API_URL}/api/v1/admin/auth/me`, {
+        credentials: 'include',
+        cache: 'no-store',
+      });
+
+      if (!res.ok) throw new Error('Session invalid');
+
+      const json = (await res.json()) as {
+        status: string;
+        data: { token: string; admin: AdminUser };
+      };
+
+      set({
+        token: json.data.token,
+        admin: json.data.admin,
+        isAuthenticated: true,
+        hasHydrated: true,
+      });
+    } catch {
+      // No valid session — clean up any legacy localStorage artefacts
+      if (typeof window !== 'undefined') {
         localStorage.removeItem('cc_admin_token');
         localStorage.removeItem('cc_admin_user');
-        document.cookie = 'cc_admin_session=; path=/; max-age=0';
-        set({ hasHydrated: true });
       }
-    } else {
-      // Clear any stale/corrupt values
-      localStorage.removeItem('cc_admin_token');
-      localStorage.removeItem('cc_admin_user');
-      document.cookie = 'cc_admin_session=; path=/; max-age=0';
       set({ hasHydrated: true });
     }
   },

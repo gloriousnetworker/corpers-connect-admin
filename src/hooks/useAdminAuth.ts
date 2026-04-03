@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
+import { adminLogout } from '@/lib/api/admin';
 import { AdminRole } from '@/types/enums';
 
 export function useAdminAuth() {
@@ -27,6 +28,8 @@ export function useAdminAuth() {
   const isLoading = !hasHydrated;
 
   const logout = () => {
+    // Call backend to clear the httpOnly cookie, then wipe in-memory state.
+    adminLogout().catch(() => {/* ignore — clear locally regardless */});
     clearAuth();
     router.replace('/login');
   };

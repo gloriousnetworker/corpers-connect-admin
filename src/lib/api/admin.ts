@@ -115,3 +115,7 @@ export async function adminLogin(email: string, password: string) {
   };
   return { token: data.accessToken, admin };
 }
+
+export async function adminLogout(): Promise<void> {
+  await apiClient.post('/admin/auth/logout');
+}
