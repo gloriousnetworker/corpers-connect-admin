@@ -21,8 +21,10 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (typeof window !== 'undefined') {
       localStorage.setItem('cc_admin_token', token);
       localStorage.setItem('cc_admin_user', JSON.stringify(admin));
-      // Session cookie lets middleware protect routes server-side
-      document.cookie = 'cc_admin_session=1; path=/; max-age=2592000; SameSite=Lax';
+      // Store the JWT in the session cookie so middleware can decode it and
+      // verify expiry + role — not just a presence flag.
+      // Not httpOnly because client JS must be able to clear it on logout.
+      document.cookie = `cc_admin_session=${token}; path=/; max-age=2592000; SameSite=Lax`;
     }
     set({ token, admin, isAuthenticated: true });
   },
