@@ -1,6 +1,8 @@
 import withPWAInit from '@ducanh2912/next-pwa';
 
-const RAILWAY_URL = 'https://corpers-connect-server-production.up.railway.app';
+// Single source of truth for the backend URL.
+// Set NEXT_PUBLIC_API_URL in .env.local (dev) and Vercel env vars (prod).
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://corpers-connect-server-production.up.railway.app';
 
 const withPWA = withPWAInit({
   dest: 'public',
@@ -33,7 +35,7 @@ const nextConfig = {
     return [
       {
         source: '/api/proxy/:path*',
-        destination: `${RAILWAY_URL}/api/v1/:path*`,
+        destination: `${API_URL}/api/v1/:path*`,
       },
     ];
   },

@@ -1,6 +1,7 @@
 import axios, { type AxiosError } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://corpers-connect-server-production.up.railway.app/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+if (!API_URL) throw new Error('NEXT_PUBLIC_API_URL is not set — add it to your .env.local or Vercel env vars');
 
 export const apiClient = axios.create({
   baseURL: API_URL,

@@ -1,10 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
-const RAILWAY_URL = 'https://corpers-connect-server-production.up.railway.app/api/v1';
+// Read from env so staging and production environments don't require code changes.
+// NEXT_PUBLIC_API_URL must be set — see .env.local / Vercel env vars.
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+if (!BASE_URL) throw new Error('NEXT_PUBLIC_API_URL is not set');
 
 async function handler(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params;
-  const targetUrl = `${RAILWAY_URL}/${path.join('/')}`;
+  const targetUrl = `${BASE_URL}/api/v1/${path.join('/')}`;
 
   // Forward query string
   const { search } = new URL(request.url);
