@@ -184,9 +184,7 @@ export default function DashboardPage() {
             <p className="text-sm font-medium text-foreground mb-3">Recent Reports</p>
             {isLoading ? (
               <table className="w-full">
-                <tbody>
-                  <SkeletonRow rows={5} columns={3} />
-                </tbody>
+                <SkeletonRow rows={5} columns={3} />
               </table>
             ) : !data?.recentReports.length ? (
               <p className="text-sm text-foreground-secondary py-4 text-center">No recent reports</p>
@@ -225,9 +223,7 @@ export default function DashboardPage() {
             <p className="text-sm font-medium text-foreground mb-3">Recent Registrations</p>
             {isLoading ? (
               <table className="w-full">
-                <tbody>
-                  <SkeletonRow rows={5} columns={3} />
-                </tbody>
+                <SkeletonRow rows={5} columns={3} />
               </table>
             ) : !data?.recentRegistrations.length ? (
               <p className="text-sm text-foreground-secondary py-4 text-center">No recent registrations</p>

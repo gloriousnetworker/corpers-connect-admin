@@ -39,8 +39,8 @@ jest.mock('@/store/ui.store', () => ({
 }));
 
 jest.mock('@/store/auth.store', () => ({
-  useAuthStore: (selector: (s: { token: string; isAuthenticated: boolean }) => unknown) =>
-    selector({ token: 'mock-token', isAuthenticated: true }),
+  useAuthStore: (selector: (s: { token: string; isAuthenticated: boolean; hydrate: () => void }) => unknown) =>
+    selector({ token: 'mock-token', isAuthenticated: true, hydrate: jest.fn() }),
 }));
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
