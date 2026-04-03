@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface UiState {
   sidebarCollapsed: boolean;
@@ -6,8 +7,13 @@ interface UiState {
   toggleSidebar: () => void;
 }
 
-export const useUiStore = create<UiState>((set, get) => ({
-  sidebarCollapsed: false,
-  setSidebarCollapsed: (v) => set({ sidebarCollapsed: v }),
-  toggleSidebar: () => set({ sidebarCollapsed: !get().sidebarCollapsed }),
-}));
+export const useUiStore = create<UiState>()(
+  persist(
+    (set, get) => ({
+      sidebarCollapsed: false,
+      setSidebarCollapsed: (v) => set({ sidebarCollapsed: v }),
+      toggleSidebar: () => set({ sidebarCollapsed: !get().sidebarCollapsed }),
+    }),
+    { name: 'cc-admin-ui' },
+  ),
+);

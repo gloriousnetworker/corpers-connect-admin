@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Logo from '@/components/shared/Logo';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const token = useAuthStore((s) => s.token);
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -21,12 +22,17 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
+  // Safe destination: only allow relative paths to prevent open-redirect attacks
+  const nextParam = searchParams.get('next');
+  const destination =
+    nextParam && nextParam.startsWith('/') ? nextParam : '/dashboard';
+
   // Redirect already-authenticated admins away from login
   useEffect(() => {
     if (token && isAuthenticated) {
-      router.replace('/dashboard');
+      router.replace(destination);
     }
-  }, [token, isAuthenticated, router]);
+  }, [token, isAuthenticated, router, destination]);
 
   const {
     register,
@@ -41,7 +47,7 @@ export default function AdminLoginPage() {
     try {
       const result = await adminLogin(data.email, data.password);
       setAuth(result.token, result.admin);
-      router.replace('/dashboard');
+      router.replace(destination);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign in failed. Please try again.';
       setServerError(message);
