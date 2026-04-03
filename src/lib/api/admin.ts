@@ -11,36 +11,46 @@ export async function getDashboard(): Promise<DashboardStats> {
     pendingReports: number;
     pendingSellerApps: number;
     activeSubscriptions: number;
+    newUsersThisWeek: number;
+    newThisWeekChange: number;
+    revenue30d: number;
+    revenueChange: number;
+    charts: {
+      userGrowth: Array<{ date: string; count: number }>;
+      revenue: Array<{ date: string; amount: number }>;
+      contentActivity: Array<{ date: string; posts: number; stories: number; reels: number }>;
+    };
+    recentReports: DashboardStats['recentReports'];
+    recentRegistrations: DashboardStats['recentRegistrations'];
   };
 
-  // Map flat backend shape → nested DashboardStats shape the UI expects
   return {
     users: {
       total: raw.totalUsers ?? 0,
       activeToday: raw.activeUsers ?? 0,
-      newThisWeek: 0,
-      newThisWeekChange: 0,
+      newThisWeek: raw.newUsersThisWeek ?? 0,
+      newThisWeekChange: raw.newThisWeekChange ?? 0,
     },
     subscriptions: {
       premium: raw.premiumUsers ?? 0,
-      revenue30d: 0,
-      revenueChange: 0,
+      revenue30d: raw.revenue30d ?? 0,
+      revenueChange: raw.revenueChange ?? 0,
     },
     moderation: {
       pendingReports: raw.pendingReports ?? 0,
       pendingSellerApps: raw.pendingSellerApps ?? 0,
     },
     charts: {
-      userGrowth: [],
-      revenue: [],
-      contentActivity: [],
+      userGrowth: raw.charts?.userGrowth ?? [],
+      revenue: raw.charts?.revenue ?? [],
+      contentActivity: raw.charts?.contentActivity ?? [],
       subscriptionMix: {
         free: (raw.totalUsers ?? 0) - (raw.premiumUsers ?? 0),
         premium: raw.premiumUsers ?? 0,
       },
     },
-    recentReports: [],
-    recentRegistrations: [],
+    recentReports: raw.recentReports ?? [],
+    recentRegistrations: raw.recentRegistrations ?? [],
   };
 }
 
