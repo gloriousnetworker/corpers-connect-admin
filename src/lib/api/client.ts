@@ -1,4 +1,6 @@
 import axios, { type AxiosError } from 'axios';
+import { routerPush } from '@/lib/router-ref';
+import { useAuthStore } from '@/store/auth.store';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 if (!API_URL) throw new Error('NEXT_PUBLIC_API_URL is not set — add it to your .env.local or Vercel env vars');
@@ -26,12 +28,9 @@ apiClient.interceptors.response.use(
   (res) => res,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('cc_admin_token');
-        localStorage.removeItem('cc_admin_user');
-        if (!window.location.pathname.includes('/login')) {
-          window.location.replace('/login');
-        }
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        useAuthStore.getState().clearAuth();
+        routerPush(`/login?next=${encodeURIComponent(window.location.pathname)}`);
       }
     }
     const message =

@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { useAuthStore } from '@/store/auth.store';
+import { setRouterRef } from '@/lib/router-ref';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +20,11 @@ const queryClient = new QueryClient({
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const hydrate = useAuthStore((s) => s.hydrate);
+  const router = useRouter();
+
+  useEffect(() => {
+    setRouterRef(router);
+  }, [router]);
 
   useEffect(() => {
     hydrate();
