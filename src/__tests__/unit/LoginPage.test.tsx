@@ -8,8 +8,11 @@ import { AdminRole } from '@/types/enums';
 
 const mockReplace = jest.fn();
 
+const mockSearchParams = { get: (_key: string) => null };
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ replace: mockReplace }),
+  useSearchParams: () => mockSearchParams,
 }));
 
 jest.mock('next/image', () => {
@@ -33,8 +36,11 @@ jest.mock('@/store/auth.store', () => ({
 
 const mockAdminLogin = jest.fn();
 
+const mockAdminComplete2FAChallenge = jest.fn();
+
 jest.mock('@/lib/api/admin', () => ({
   adminLogin: (...args: unknown[]) => mockAdminLogin(...args),
+  adminComplete2FAChallenge: (...args: unknown[]) => mockAdminComplete2FAChallenge(...args),
 }));
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

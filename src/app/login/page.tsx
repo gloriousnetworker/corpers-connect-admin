@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Logo from '@/components/shared/Logo';
 import { useForm } from 'react-hook-form';
@@ -12,7 +12,7 @@ import { loginSchema, type LoginInput } from '@/lib/validations';
 import { Spinner } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
-export default function AdminLoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -258,5 +258,13 @@ export default function AdminLoginPage() {
         © {new Date().getFullYear()} Corpers Connect Admin
       </p>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }
