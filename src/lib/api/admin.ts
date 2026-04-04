@@ -107,8 +107,42 @@ export async function getAuditLogs(params?: {
   };
 }
 
-export async function adminLogin(email: string, password: string) {
+export type AdminLoginResult =
+  | { requires2FA: true; challengeToken: string }
+  | { requires2FA: false; token: string; admin: import('@/types/models').AdminUser };
+
+export async function adminLogin(email: string, password: string): Promise<AdminLoginResult> {
   const res = await apiClient.post('/admin/auth/login', { email, password });
+  const data = res.data.data as
+    | { requires2FA: true; challengeToken: string }
+    | {
+        requires2FA: false;
+        accessToken: string;
+        admin: { id: string; email: string; firstName: string; lastName: string; role: string };
+      };
+
+  if (data.requires2FA) {
+    return { requires2FA: true, challengeToken: data.challengeToken };
+  }
+
+  const admin: import('@/types/models').AdminUser = {
+    id: data.admin.id,
+    email: data.admin.email,
+    firstName: data.admin.firstName,
+    lastName: data.admin.lastName,
+    role: data.admin.role as import('@/types/models').AdminUser['role'],
+    isActive: true,
+    lastLoginAt: null,
+    createdAt: new Date().toISOString(),
+  };
+  return { requires2FA: false, token: data.accessToken, admin };
+}
+
+export async function adminComplete2FAChallenge(
+  challengeToken: string,
+  code: string,
+): Promise<{ token: string; admin: import('@/types/models').AdminUser }> {
+  const res = await apiClient.post('/admin/auth/2fa/challenge', { challengeToken, code });
   const data = res.data.data as {
     accessToken: string;
     admin: { id: string; email: string; firstName: string; lastName: string; role: string };
@@ -124,6 +158,19 @@ export async function adminLogin(email: string, password: string) {
     createdAt: new Date().toISOString(),
   };
   return { token: data.accessToken, admin };
+}
+
+export async function adminInitiate2FA(): Promise<{ secret: string; qrCode: string }> {
+  const res = await apiClient.post('/admin/auth/2fa/initiate');
+  return res.data.data as { secret: string; qrCode: string };
+}
+
+export async function adminConfirm2FA(code: string): Promise<void> {
+  await apiClient.post('/admin/auth/2fa/confirm', { code });
+}
+
+export async function adminDisable2FA(code: string): Promise<void> {
+  await apiClient.delete('/admin/auth/2fa', { data: { code } });
 }
 
 export async function adminLogout(): Promise<void> {

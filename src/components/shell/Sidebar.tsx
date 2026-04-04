@@ -17,6 +17,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  ShieldCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -39,6 +40,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Subscriptions', href: '/subscriptions', icon: CreditCard },
   { label: 'Broadcasts', href: '/broadcasts', icon: Megaphone },
   { label: 'Settings', href: '/settings', icon: Settings },
+  { label: 'Security', href: '/security', icon: ShieldCheck },
   { label: 'Admins', href: '/admins', icon: UserCog, superAdminOnly: true },
   { label: 'Audit Logs', href: '/audit-logs', icon: ScrollText, superAdminOnly: true },
 ];

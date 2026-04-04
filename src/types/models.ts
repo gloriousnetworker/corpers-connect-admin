@@ -24,6 +24,7 @@ export interface AdminUser {
   lastName: string;
   role: AdminRole;
   isActive: boolean;
+  twoFactorEnabled?: boolean;
   lastLoginAt: string | null;
   createdAt: string;
 }

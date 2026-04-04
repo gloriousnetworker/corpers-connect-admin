@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
-import { adminLogin } from '@/lib/api/admin';
+import { adminLogin, adminComplete2FAChallenge } from '@/lib/api/admin';
 import { loginSchema, type LoginInput } from '@/lib/validations';
 import { Spinner } from '@/components/ui';
 import { cn } from '@/lib/utils';
@@ -21,6 +21,9 @@ export default function AdminLoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [challengeToken, setChallengeToken] = useState<string | null>(null);
+  const [totpCode, setTotpCode] = useState('');
+  const [totpSubmitting, setTotpSubmitting] = useState(false);
 
   // Safe destination: only allow relative paths to prevent open-redirect attacks
   const nextParam = searchParams.get('next');
@@ -46,11 +49,32 @@ export default function AdminLoginPage() {
     setServerError(null);
     try {
       const result = await adminLogin(data.email, data.password);
+      if (result.requires2FA) {
+        setChallengeToken(result.challengeToken);
+        return;
+      }
       setAuth(result.token, result.admin);
       router.replace(destination);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign in failed. Please try again.';
       setServerError(message);
+    }
+  };
+
+  const onTotpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!challengeToken) return;
+    setServerError(null);
+    setTotpSubmitting(true);
+    try {
+      const result = await adminComplete2FAChallenge(challengeToken, totpCode.trim());
+      setAuth(result.token, result.admin);
+      router.replace(destination);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Invalid code. Please try again.';
+      setServerError(message);
+    } finally {
+      setTotpSubmitting(false);
     }
   };
 
@@ -64,7 +88,66 @@ export default function AdminLoginPage() {
         </span>
       </div>
 
+      {/* 2FA challenge card — shown after successful password auth */}
+      {challengeToken && (
+        <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-border p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-1">Two-Factor Authentication</h2>
+          <p className="text-foreground-secondary text-sm mb-6">
+            Enter the 6-digit code from your authenticator app.
+          </p>
+
+          {serverError && (
+            <div role="alert" className="mb-4 flex items-start gap-2 rounded-lg bg-error-light px-3 py-2.5 text-sm text-error">
+              <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+              <span>{serverError}</span>
+            </div>
+          )}
+
+          <form onSubmit={onTotpSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="totp" className="block text-sm font-medium text-foreground mb-1">
+                Authenticator Code
+              </label>
+              <input
+                id="totp"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                placeholder="000000"
+                value={totpCode}
+                onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ''))}
+                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors tracking-[0.3em] text-center font-mono"
+                autoFocus
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={totpSubmitting || totpCode.length < 6}
+              className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg transition-colors text-sm"
+            >
+              {totpSubmitting ? (
+                <>
+                  <Spinner size="sm" centered={false} />
+                  Verifying…
+                </>
+              ) : (
+                'Verify'
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setChallengeToken(null); setServerError(null); setTotpCode(''); }}
+              className="w-full text-sm text-foreground-secondary hover:text-foreground transition-colors py-1"
+            >
+              ← Back to login
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Login card */}
+      {!challengeToken && (
       <div
         data-testid="login-card"
         className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-border p-6"
@@ -169,6 +252,7 @@ export default function AdminLoginPage() {
           </button>
         </form>
       </div>
+      )}
 
       <p className="mt-8 text-xs text-foreground-secondary">
         © {new Date().getFullYear()} Corpers Connect Admin
